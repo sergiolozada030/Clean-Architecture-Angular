@@ -8,7 +8,7 @@ import { CommentDto } from '../domain/comment.dto';
 export class ConvertToCsvUseCase {
   private readonly exportToCsvGateway = inject(ExportToCsvGateway);
 
-  convert(report: CommentDto[], columns: string[]) {
-    return this.exportToCsvGateway.convertToCsv(report, columns);
+  execute(report: CommentDto[], fileName: string, type: string): void {
+    return this.exportToCsvGateway.generate(report, fileName, type);
   }
 }

@@ -4,9 +4,8 @@ import { GetCommentsUseCase } from './application/get-comments.usecase';
 import { Comment } from './domain/comment.entity';
 import { SaveCommentsUseCase } from './application/save-comments.usecase';
 import { DeleteCommentsUseCase } from './application/delete-comments.usecase';
-import { GetColumnsUseCase } from './application/get-columns.usecase';
 import { ConvertToCsvUseCase } from './application/covert-to-csv.usecase';
-import { DownloadCsvUseCase } from './application/download-csv.usecase';
+import { CommentDto } from './domain/comment.dto';
 
 @Component({
   selector: 'app-root',
@@ -17,13 +16,11 @@ import { DownloadCsvUseCase } from './application/download-csv.usecase';
 })
 export class AppComponent implements OnInit {
   title = 'clean-arquitecture';
-  allComments: Comment[] = [];
+  allComments: CommentDto[] = [];
   private readonly getCommentsUseCase = inject(GetCommentsUseCase);
   private readonly saveCommentsUseCase = inject(SaveCommentsUseCase);
   private readonly deleteCommentsUseCase = inject(DeleteCommentsUseCase);
-  private readonly getColumnsUseCase = inject(GetColumnsUseCase);
   private readonly convertToCsvUseCase = inject(ConvertToCsvUseCase);
-  private readonly downloadCsvUseCase = inject(DownloadCsvUseCase);
 
   ngOnInit() {
     this.getCommentsUseCase.getAllComments().subscribe((comments) => {
@@ -53,10 +50,10 @@ export class AppComponent implements OnInit {
   }
 
   exportToCsv() {
-    const data = JSON.parse(JSON.stringify(this.allComments));
-    const columns = this.getColumnsUseCase.getColumns(data);
-    const csvData = this.convertToCsvUseCase.convert(data, columns);
-    console.log(csvData);
-    this.downloadCsvUseCase.downloadCsv(csvData, 'reporte.csv', 'text/csv');
+    this.convertToCsvUseCase.execute(
+      this.allComments,
+      'reporte.csv',
+      'text/csv'
+    );
   }
 }
